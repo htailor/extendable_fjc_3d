@@ -13,16 +13,21 @@ import numpy as np
 from multiprocessing import Pool
 from libmath import *
 
+# Use LaTeX for plot labels and text
 plt.rc('text',usetex=True)
 plt.rc('font',**{'family':'serif','serif':['Computer Modern']})
 
+# Results directory
 ResultsDir = ['results','results_small_approx']
 
 # Definition of constants in the FJC
-
 link_length=1
 extendable_length=0.1
 
+
+###############################
+# Partition Function equation #
+###############################
 
 def ConstantParameter(n_, R_):
 
@@ -52,6 +57,7 @@ def Kernal(n_, R_, j1_, j2_, j3_, j4_, l1_, l2_, l3_, l4_, alpha_):
 
     return pow(Eta(j1_, j2_, j3_, j4_) + Eta(l1_, l2_, l3_, l4_) - R_,2*n_+alpha_-2)*Sgn(Eta(j1_, j2_, j3_, j4_) + Eta(l1_, l2_, l3_, l4_) - R_)
 
+# Original Partition Function equation
 def PartitionFunction(n_, R_):
 
     SumPF = 0
@@ -70,7 +76,9 @@ def PartitionFunction(n_, R_):
     return SumPF*ConstantParameter(n_,R_)
 
 
-
+#####################################################
+# Partition Function equation - Small approximation #
+#####################################################
 
 def SAConstantParameter(n_, R_):
 
@@ -93,7 +101,11 @@ def SAPartitionFunction(n_, R_):
     return SumPF*SAConstantParameter(n_,R_)
 
 
+####################
+# Generate Results #
+####################
 
+# Generates Z(R) results
 def ZR_data(n_):
 
     nrange = n_ + 1
@@ -104,11 +116,9 @@ def ZR_data(n_):
     output_filename2 = 'n'+str(n_)+'_ZR_normalised.txt'
     out2 = open(os.path.join(ResultsDir[0],output_filename2),'w')
 
-    
     rx = np.linspace(0.01,nrange,nrange*100)
     zr = []
     zr_norm = []
-
 
     for i in range(len(rx)):
         z = PartitionFunction(n_,rx[i])
@@ -120,13 +130,13 @@ def ZR_data(n_):
         out1.write(str(rx[int(i)]) + ',' + str(zr[int(i)]) + '\n')
         out2.write(str(rx[int(i)]) + ',' + str(zr_norm[int(i)]) + '\n')
 
-
     output_filename_plot_PDF1 = os.path.join(ResultsDir[0],'n'+str(n_)+'_ZR.pdf')
     output_filename_plot_PDF2 = os.path.join(ResultsDir[0],'n'+str(n_)+'_ZR_normalised.pdf')
 
     PlotData(rx,zr,'R/a','Z(R)/C^{N}',output_filename_plot_PDF1,'#feb119','None')   
     PlotData(rx,zr_norm,'R/a','4 \pi R^{2} Z(R)/C^{N}',output_filename_plot_PDF2,'#feb119','#FFEFD1')
 
+# Generate Z(R) results for small approximation of p
 def ZR_dataSA(n_):
     if n_ > 2:
         nrange = n_ + 1
@@ -157,8 +167,7 @@ def ZR_dataSA(n_):
         PlotData(rx,zr,'R/a','Z(R)/C^{N}',SAoutput_filename_plot_PDF1,'#feb119','None')
         PlotData(rx,zr_norm,'R/a','4 \pi R^{2} Z(R)/C^{N}',SAoutput_filename_plot_PDF2,'#feb119','#FFEFD1')
 
-
-
+# Plotting function
 def PlotData(xData_, yData_, xlabel_, ylabel_, outfilenamepdf_, plotcolor_, fillcolor_):
 
     plt.figure()
