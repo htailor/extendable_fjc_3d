@@ -14,7 +14,6 @@ quarter = 1/4
 root_pi = sqrt(pi)
 
 
-
 def inverse(x_):
 
     return 1/float(x_)

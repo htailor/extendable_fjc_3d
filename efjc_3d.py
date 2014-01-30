@@ -15,7 +15,7 @@ from libmath import *
 
 # Use LaTeX for plot labels and text
 plt.rc('text',usetex=True)
-plt.rc('font',**{'family':'serif','serif':['Computer Modern']})
+plt.rc('font',**{'family':'serif','serif':['Computer Modern'],'size':16})
 
 # Results directory
 ResultsDir = ['results','results_small_approx']
@@ -39,23 +39,23 @@ def Eta(k1_, k2_, k3_, k4_):
 
 def Sj(j1_, j2_, j3_, j4_):
 
-    return Multinomial(j1_, j2_, j3_, j4_)*pow(-1,j2_+j4_)
+    return multinomial(j1_, j2_, j3_, j4_)*pow(-1,j2_+j4_)
 
 def Sl(l1_, l2_, l3_, l4_):
 
-    return Multinomial(l1_, l2_, l3_, l4_)*pow(-link_length-half*extendable_length,l1_+l4_)*pow(link_length-half*extendable_length,l2_+l3_)
+    return multinomial(l1_, l2_, l3_, l4_)*pow(-link_length-half*extendable_length,l1_+l4_)*pow(link_length-half*extendable_length,l2_+l3_)
 
 def Const(n_, alpha_):
 
-    return Binomial(n_,alpha_)*Inverse(Factorial(2*n_+alpha_-2))
+    return binomial(n_,alpha_)*inverse(factorial(2*n_+alpha_-2))
 
 def NormalisingFunction(n_, R_):
 
-    return 4*pi*Squared(R_)
+    return 4*pi*squared(R_)
 
 def Kernal(n_, R_, j1_, j2_, j3_, j4_, l1_, l2_, l3_, l4_, alpha_):
 
-    return pow(Eta(j1_, j2_, j3_, j4_) + Eta(l1_, l2_, l3_, l4_) - R_,2*n_+alpha_-2)*Sgn(Eta(j1_, j2_, j3_, j4_) + Eta(l1_, l2_, l3_, l4_) - R_)
+    return pow(Eta(j1_, j2_, j3_, j4_) + Eta(l1_, l2_, l3_, l4_) - R_,2*n_+alpha_-2)*sgn(Eta(j1_, j2_, j3_, j4_) + Eta(l1_, l2_, l3_, l4_) - R_)
 
 # Original Partition Function equation
 def PartitionFunction(n_, R_):
@@ -82,7 +82,7 @@ def PartitionFunction(n_, R_):
 
 def SAConstantParameter(n_, R_):
 
-    return pow(4*pi*link_length*extendable_length,n_)*pi*Inverse(Squared(2*pi)*R_*pow(2,n_)*Factorial(n_-2))
+    return pow(4*pi*link_length*extendable_length,n_)*pi*inverse(squared(2*pi)*R_*pow(2,n_)*factorial(n_-2))
 
 def SAEta(n_, k_, R_):
 
@@ -90,7 +90,7 @@ def SAEta(n_, k_, R_):
 
 def SAKernal(n_, k_, R_):
 
-    return Binomial(n_,k_)*pow(-1,k_)*pow(SAEta(n_, k_, R_),n_-2)*Sgn(SAEta(n_, k_, R_))
+    return binomial(n_,k_)*pow(-1,k_)*pow(SAEta(n_, k_, R_),n_-2)*sgn(SAEta(n_, k_, R_))
 
 def SAPartitionFunction(n_, R_):
 
@@ -181,8 +181,8 @@ def PlotData(xData_, yData_, xlabel_, ylabel_, outfilenamepdf_, plotcolor_, fill
     ax.yaxis.set_ticks_position('none')
 
     plt.fill(xData_, yData_, color=fillcolor_) 
-    plt.xlabel(r'$' + xlabel_ + '$',fontsize=12)
-    plt.ylabel(r'$' + ylabel_ + '$', fontsize=12)
+    plt.xlabel(r'$' + xlabel_ + '$',fontsize=18)
+    plt.ylabel(r'$' + ylabel_ + '$', fontsize=18)
     plt.grid(color='0.85', linestyle='--')
     
     plt.ylim([0,max(yData_)+0.04*max(yData_)])
@@ -191,13 +191,12 @@ def PlotData(xData_, yData_, xlabel_, ylabel_, outfilenamepdf_, plotcolor_, fill
 
 
 
-def main():
-
+if __name__ == '__main__':
     os.system('cls' if os.name=='nt' else 'clear')
     
     for Dir in ResultsDir:
         if os.path.exists(Dir):
-            for file in os.listdir(Dir):	
+            for file in os.listdir(Dir):
                 file_path = os.path.join(Dir, file)
                 try:
                     if os.path.isfile(file_path):
@@ -206,23 +205,23 @@ def main():
                     print e
         else:
             os.makedirs(Dir)
-
+    
     cpu_cores=multiprocessing.cpu_count()
     start = time.clock()
-
-    pool = Pool(processes=cpu_cores)   
+    
+    pool = Pool(processes=cpu_cores)
     N = [1,2,3,4,6,8]
     
-  
+    
     print "\nExtendable Freely Jointed Chain 3D"
     print "----------------------------------\n"
     print "Number of Links\t\t:", N
     print "Link Length\t\t:", link_length
     print "Extendable Link Length\t:", extendable_length
-    print  
+    print
     
     pool.map(ZR_data, N)
-
+    
     N = [3,4,6,8,10,12]
     print "\nExtendable Freely Jointed Chain 3D - Small Approximation"
     print "--------------------------------------------------------\n"
@@ -230,15 +229,12 @@ def main():
     print "Link Length\t\t:", link_length
     print "Extendable Link Length\t:", extendable_length
     print
-
+    
     pool.map(ZR_dataSA, N)
-
-    print 
+    
+    print
     print 'Runtime (' + str(cpu_cores) + ' cpu cores) : ' + str(time.clock()-start)
     print
-    
 
-if __name__ == '__main__':
-    main()
 
   
